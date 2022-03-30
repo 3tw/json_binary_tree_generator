@@ -1,10 +1,11 @@
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use serde_json;
 
 #[derive(Deserialize, Serialize)]
 pub struct Node {
     pub id: String,
-    pub page: u8,
+    pub page: u16,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -15,10 +16,10 @@ pub struct Edge {
 }
 
 impl Node {
-    pub fn new() -> serde_json::Result<String> {
+    pub fn new(id: u16) -> serde_json::Result<String> {
         let node = Node {
-            id: String::from("krnkei"),
-            page: 10,
+            id: id.to_string(),
+            page: rand::thread_rng().gen_range(0..500),
         };
         serde_json::to_string(&node)
     }

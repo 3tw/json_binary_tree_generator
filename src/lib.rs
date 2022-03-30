@@ -38,12 +38,15 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     let mut data = Vec::new();
 
-    let node = Node::new().expect("Couldn't serialize data to json");
-    let edge = Edge::new().expect("Couldn't serialize data to json");
     data.push(String::from("{\"data\":["));
-    data.push(node);
-    data.push(String::from(","));
-    data.push(edge);
+    for i in 0..config.number_of_nodes {
+        let node = Node::new(i).expect("Couldn't serialize data to json");
+        let edge = Edge::new().expect("Couldn't serialize data to json");
+        data.push(node);
+        data.push(String::from(","));
+        data.push(edge);
+        data.push(String::from(","));
+    }
     data.push(String::from("]}"));
 
     let stringified_data: String = data.into_iter().map(String::from).collect();

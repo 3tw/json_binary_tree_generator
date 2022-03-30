@@ -11,7 +11,7 @@ fn main() {
     });
 
     println!("Filename: {}", config.filename);
-    println!("Number of objects: {}", config.number_of_objects);
+    println!("Number of objects: {}", config.number_of_nodes);
 
     if let Err(e) = json_generator::run(config) {
         println!("Application error: {}", e);

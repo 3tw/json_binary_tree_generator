@@ -1,5 +1,5 @@
 use std::error::Error;
-// use std::fs;
+use std::fs;
 use std::fs::File;
 use std::path::Path;
 
@@ -29,6 +29,10 @@ impl Config {
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let filename = Path::new(&config.filename);
     let file = File::create(&filename);
+
+    // DEV
+    let data = "Random data";
+    fs::write(&filename, &data);
 
     println!("file: {:?}", file);
 

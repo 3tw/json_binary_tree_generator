@@ -1,8 +1,6 @@
-mod json_objects;
+mod json;
 
-use crate::json_objects::Edge;
-// use crate::json_objects::JsonData;
-use crate::json_objects::Node;
+use crate::json::create_json_content;
 
 use std::error::Error;
 use std::fs;
@@ -11,7 +9,7 @@ use std::path::Path;
 
 pub struct Config {
     pub filename: String,
-    pub number_of_nodes: u16,
+    pub number_of_nodes: u32,
 }
 
 impl Config {
@@ -20,9 +18,9 @@ impl Config {
             return Err("You need to enter at least one argument (filename)");
         }
         let filename = args[1].clone();
-        let number_of_nodes = match args[2].clone().parse::<u16>() {
+        let number_of_nodes = match args[2].clone().parse::<u32>() {
             Ok(number) => number,
-            Err(_e) => return Err("Argument for number of nodes must be convertable to a number"),
+            Err(_e) => return Err("Argument for number of nodes must be convertable to a number and lower than max value of u32 integer type"),
         };
 
         Ok(Config {
@@ -34,25 +32,11 @@ impl Config {
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let filename = Path::new(&config.filename);
-    let file = File::create(&filename);
+    let _file = File::create(&filename);
 
-    let mut data = Vec::new();
-
-    data.push(String::from("{\"data\":["));
-    for i in 0..config.number_of_nodes {
-        let node = Node::new(i).expect("Couldn't serialize data to json");
-        let edge = Edge::new().expect("Couldn't serialize data to json");
-        data.push(node);
-        data.push(String::from(","));
-        data.push(edge);
-        data.push(String::from(","));
-    }
-    data.push(String::from("]}"));
-
-    let stringified_data: String = data.into_iter().map(String::from).collect();
+    let stringified_data = create_json_content(config.number_of_nodes);
     fs::write(&filename, stringified_data).expect("Couldn'write json to file");
-
-    println!("file: {:?}", file);
 
     Ok(())
 }
+

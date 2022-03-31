@@ -18,10 +18,14 @@ impl Config {
             return Err("You need to enter at least one argument (filename)");
         }
         let filename = args[1].clone();
-        let number_of_nodes = match args[2].clone().parse::<u32>() {
-            Ok(number) => number,
-            Err(_e) => return Err("Argument for number of nodes must be convertable to a number and lower than max value of u32 integer type"),
-        };
+        let mut number_of_nodes = 10;
+        
+        if args.len() > 2 {
+          number_of_nodes = match args[2].clone().parse::<u32>() {
+              Ok(number) => number,
+              _ => 10
+          };  
+        }
 
         Ok(Config {
             filename,
@@ -39,4 +43,3 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
-

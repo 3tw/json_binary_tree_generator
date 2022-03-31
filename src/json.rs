@@ -47,17 +47,15 @@ pub fn create_json_content(iterations: u32) -> String {
     for i in 1..iterations {
         let node = Node::new(i);
         let node_json = serde_json::to_string(&node).expect("Couldn't serialize node to json");
-        data.push(String::from("{\"group\": \"nodes\",\"data\":"));
         data.push(node_json);
-        data.push(String::from("},"));
+        data.push(String::from(","));
         if last_id > 0 {
             let edge = Edge::new(last_id, i);
             let edge_json = serde_json::to_string(&edge).expect("Couldn't serialize edge to json");
-            data.push(String::from("{\"group\": \"edges\",\"data\":"));
             data.push(edge_json);
             match i.cmp(&iterations) {
-                Ordering::Less => data.push(String::from("},")),
-                _ => data.push(String::from("}")),
+                Ordering::Less => data.push(String::from(",")),
+                _ => ()
             };
         }
         last_id = i;

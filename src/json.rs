@@ -1,67 +1,44 @@
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use std::cmp::Ordering;
 
 #[derive(Deserialize, Serialize)]
 pub struct Node {
     pub id: String,
-    pub page: u16,
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct Edge {
-    pub id: String,
-    pub source: String,
-    pub target: String,
+    pub random_number: u16,
 }
 
 impl Node {
     fn new(id: u32) -> Node {
         Node {
             id: id.to_string(),
-            page: rand::thread_rng().gen_range(0..500),
-        }
-    }
-}
-
-impl Edge {
-    // fn new(source: u32, target: u32) -> serde_json::Result<String> {
-    fn new(source: u32, target: u32) -> Edge {
-        let source_string = source.to_string();
-        let target_string = target.to_string();
-        let id = source_string.clone() + "-" + &target_string;
-        Edge {
-            id: id,
-            source: source_string,
-            target: target_string,
+            random_number: rand::thread_rng().gen_range(0..500),
         }
     }
 }
 
 pub fn create_json_content(iterations: u32) -> String {
-    let mut last_id: u32 = 0;
     let mut data = Vec::new();
-    data.push(String::from("{\"elements\":["));
+    data.push(String::from("{"));
 
     for i in 1..iterations {
         let node = Node::new(i);
-        let node_json = serde_json::to_string(&node).expect("Couldn't serialize node to json");
+        let node_json = create_json_string(&node);
         data.push(node_json);
         data.push(String::from(","));
-        if last_id > 0 {
-            let edge = Edge::new(last_id, i);
-            let edge_json = serde_json::to_string(&edge).expect("Couldn't serialize edge to json");
-            data.push(edge_json);
-            match i.cmp(&iterations) {
-                Ordering::Less => data.push(String::from(",")),
-                _ => ()
-            };
-        }
-        last_id = i;
     }
-    data.push(String::from("]}"));
+
+    // Remove last char: ','
+    data.pop();
+    data.push(String::from("}"));
     data.into_iter().map(String::from).collect()
+}
+
+fn create_json_string(data: &Node) -> String {
+    match serde_json::to_string(data) {
+        Ok(json_string) => json_string,
+        Err(_e) => String::from("Couldn't serialize edge to json"),
+    }
 }
 
 #[cfg(test)]
@@ -74,10 +51,8 @@ mod tests {
         assert_eq!(node.id, "10")
     }
     #[test]
-    fn create_new_edge() {
-        let edge = Edge::new(10, 20);
-        assert_eq!(edge.id, "10-20");
-        assert_eq!(edge.source, "10");
-        assert_eq!(edge.target, "20");
+    fn create_new_node_inequality() {
+        let node = Node::new(1000);
+        assert_ne!(node.id, "999");
     }
 }

@@ -2,10 +2,10 @@ mod json;
 
 use crate::json::create_json_content;
 
-use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::path::Path;
+use std::error::Error;
 
 pub struct Config {
     pub filename: String,

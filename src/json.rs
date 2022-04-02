@@ -19,7 +19,7 @@ impl Node {
 
 pub fn create_json_content(iterations: u32) -> String {
     let mut data = Vec::new();
-    data.push(String::from("{"));
+    data.push(String::from("["));
 
     for i in 1..iterations {
         let node = Node::new(i);
@@ -30,7 +30,7 @@ pub fn create_json_content(iterations: u32) -> String {
 
     // Remove last char: ','
     data.pop();
-    data.push(String::from("}"));
+    data.push(String::from("]"));
     data.into_iter().map(String::from).collect()
 }
 

@@ -39,9 +39,9 @@ pub fn create_json_content(iterations: u32) -> String {
         data.push(String::from(","));
     }
 
-    // Remove last char: ','
-    data.pop();
-    data.push(String::from("]"));
+    // Replave last char: ','
+    let data_last_index = data.len() - 1;
+    data[data_last_index] = String::from("]");
     data.into_iter().map(String::from).collect()
 }
 

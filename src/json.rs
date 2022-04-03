@@ -2,6 +2,15 @@ use rand::Rng;
 use serde::{Deserialize, Serialize};
 use serde_json;
 
+pub trait Stringify: serde::Serialize {
+    fn to_json(&self) -> String {
+        match serde_json::to_string(self) {
+            Ok(json_string) => json_string,
+            Err(_e) => String::from("Couldn't serialize edge to json"),
+        }
+    }
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct Node {
     pub id: String,
@@ -17,13 +26,15 @@ impl Node {
     }
 }
 
+impl Stringify for Node {}
+
 pub fn create_json_content(iterations: u32) -> String {
     let mut data = Vec::new();
     data.push(String::from("["));
 
     for i in 1..iterations {
         let node = Node::new(i);
-        let node_json = create_json_string(&node);
+        let node_json = node.to_json();
         data.push(node_json);
         data.push(String::from(","));
     }
@@ -32,13 +43,6 @@ pub fn create_json_content(iterations: u32) -> String {
     data.pop();
     data.push(String::from("]"));
     data.into_iter().map(String::from).collect()
-}
-
-fn create_json_string(data: &Node) -> String {
-    match serde_json::to_string(data) {
-        Ok(json_string) => json_string,
-        Err(_e) => String::from("Couldn't serialize edge to json"),
-    }
 }
 
 #[cfg(test)]

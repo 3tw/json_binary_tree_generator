@@ -2,10 +2,11 @@ mod json;
 
 use crate::json::create_json_content;
 
+use std::env;
+use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::path::Path;
-use std::error::Error;
 
 pub struct Config {
     pub filename: String,
@@ -13,19 +14,23 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 2 {
-            return Err("You need to enter at least one argument (filename)");
-        }
-        let filename = args[1].clone();
-        let mut number_of_nodes = 10;
-        
-        if args.len() > 2 {
-          number_of_nodes = match args[2].clone().parse::<u32>() {
-              Ok(number) => number,
-              _ => 10
-          };  
-        }
+    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        args.next();
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file name"),
+        };
+
+        let number_of_nodes = match args.next() {
+            Some(arg) => arg
+                .parse::<u32>()
+                .expect("Cannot parse number_of_nodes to u32"),
+            None => {
+                println!("Default number of nodes set to 10");
+                10
+            }
+        };
 
         Ok(Config {
             filename,

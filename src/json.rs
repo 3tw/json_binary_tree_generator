@@ -13,15 +13,22 @@ pub trait Stringify: serde::Serialize {
 
 #[derive(Deserialize, Serialize)]
 pub struct Node {
-    pub id: String,
-    pub random_number: u16,
+    pub key: u32,
+    pub parent: u64,
+    pub text: String,
 }
 
 impl Node {
     fn new(id: u32) -> Node {
+        let num: f64 = rand::thread_rng().gen_range(0.0..1.0);
         Node {
-            id: id.to_string(),
-            random_number: rand::thread_rng().gen_range(0..500),
+            key: id,
+            parent: if id > 0 {
+                (num * id as f64 / 2.0).floor() as u64
+            } else {
+                0
+            },
+            text: rand::thread_rng().gen_range(0..500).to_string(),
         }
     }
 }
@@ -32,7 +39,7 @@ pub fn create_json_content(iterations: u32) -> String {
     let mut data = Vec::new();
     data.push(String::from("["));
 
-    for i in 1..iterations {
+    for i in 0..iterations {
         let node = Node::new(i);
         let node_json = node.to_json();
         data.push(node_json);
@@ -52,11 +59,11 @@ mod tests {
     #[test]
     fn create_new_node() {
         let node = Node::new(10);
-        assert_eq!(node.id, "10")
+        assert_eq!(node.key, 10)
     }
     #[test]
     fn create_new_node_inequality() {
         let node = Node::new(1000);
-        assert_ne!(node.id, "999");
+        assert_ne!(node.key, 999);
     }
 }

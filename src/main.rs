@@ -4,10 +4,7 @@ use std::process;
 
 fn main() {
     // Gets arguments from command line
-    let config = Config::new(env::args()).unwrap_or_else(|err| {
-      eprintln!("Problem parsing arguments: {}", err);
-      process::exit(1);
-  });
+    let config = Config::new(env::args().skip(1).collect());
 
     println!("Filename: {}", config.filename);
     println!("Number of objects: {}", config.number_of_nodes);

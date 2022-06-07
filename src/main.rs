@@ -1,4 +1,4 @@
-use json_generator::Config;
+use json_binary_tree_generator::Config;
 use std::env;
 use std::process;
 
@@ -9,7 +9,7 @@ fn main() {
     println!("Filename: {}", config.filename);
     println!("Number of objects: {}", config.number_of_nodes);
 
-    if let Err(e) = json_generator::run(config) {
+    if let Err(e) = json_binary_tree_generator::run(config) {
         println!("Application error: {}", e);
 
         process::exit(1);
